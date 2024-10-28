@@ -112,6 +112,7 @@ void Camera::ProcessKeyboard(int key, float deltaTime)
     if (key == GLFW_KEY_D)
         Position += Right * velocity;
 
+	Position.y = 0.0f;
 	notifyObservers();
 }
 
@@ -123,6 +124,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 
     Yaw += xoffset;
     Pitch += yoffset;
+
+	printf("Yaw: %f, Pitch: %f\n", Yaw, Pitch);
 
     // make sure that when pitch is out of bounds, screen doesn't get flipped
     if (constrainPitch)
@@ -155,6 +158,7 @@ void Camera::updateCameraVectors()
     front.y = sin(glm::radians(Pitch));
     front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
     Front = glm::normalize(front);
+
     // also re-calculate the Right and Up vector
     Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     Up = glm::normalize(glm::cross(Right, Front));

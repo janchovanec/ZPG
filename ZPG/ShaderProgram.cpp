@@ -14,9 +14,6 @@ ShaderProgram::ShaderProgram(const char* vertex_source, const char* fragment_sou
 	idViewTransform = glGetUniformLocation(program, "viewMatrix");
 	idModelTransform = glGetUniformLocation(program, "modelMatrix");
 	idProjectionTransform = glGetUniformLocation(program, "projectionMatrix");
-    const auto pers = glm::perspective(60.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-    glUseProgram(program);
-	glUniformMatrix4fv(idProjectionTransform, 1, GL_FALSE, glm::value_ptr(pers));
 }
 
 ShaderProgram::~ShaderProgram() {
@@ -26,8 +23,10 @@ ShaderProgram::~ShaderProgram() {
 }
 
 void ShaderProgram::use(glm::mat4 modelMatrix) {
+	const auto pers = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.001f, 100000.0f);
 	auto mat = modelMatrix;
     glUseProgram(program);
+    glUniformMatrix4fv(idProjectionTransform, 1, GL_FALSE, glm::value_ptr(pers));
     glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
@@ -35,9 +34,6 @@ void ShaderProgram::updateCamera(const glm::mat4& viewMatrix, const glm::vec3& c
 {
     glUseProgram(program);
 	glUniformMatrix4fv(idViewTransform, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-
-	//GLuint idCameraPos = glGetUniformLocation(program, "cameraPos");
-	//glUniform3fv(idCameraPos, 1, glm::value_ptr(cameraPos));
 }
 
 GLuint ShaderProgram::linkProgram(GLuint vertexShader, GLuint fragmentShader) {

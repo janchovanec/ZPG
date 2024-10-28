@@ -30,9 +30,23 @@ void Scene::movePosition(int key, float deltaTime) {
 }
 
 void Scene::moveCamera(double mouseX, double mouseY) {
-	for (auto& shader : shaders) {
-		camera->ProcessMouseMovement(mouseX - lastX, mouseY - lastY);
+	float xpos = static_cast<float>(mouseX);
+	float ypos = static_cast<float>(mouseY);
+
+
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
 	}
-	lastX = mouseX;
-	lastY = mouseY;
+
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera->ProcessMouseMovement(xoffset, yoffset);
 }

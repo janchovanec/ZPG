@@ -19,7 +19,7 @@ public:
 	// Modify the transformation
 	inline void move(const glm::vec3& offset) { position += offset; }
 	inline void rotate(const glm::vec3& offset) { rotation += offset; }
-	inline void scaleBy(const glm::vec3& offset) { scale += offset; }
+	inline void scaleBy(float scale) { scale *= scale; }
 
     // Retrieve the transformation matrix
     glm::mat4 getTransformMatrix();

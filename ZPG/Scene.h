@@ -29,4 +29,5 @@ private:
 	std::unordered_map<std::string, ShaderProgram*> shaders;
 	float lastX = 400, lastY = 300;
 	Camera* camera;
+	bool firstMouse = true;
 };
