@@ -3,31 +3,45 @@
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "Shader.h"
+#include "ShaderProgram.h"
 #include "Model.h"
+#include "Scene.h"
 
 class App {
+
 public:
     App();
+	App(const App&) = delete;
+	App& operator=(const App&) = delete;
 
     ~App();
 
     void run();
 
+	void initCallback();
+
+	void initAll();
+
+    void cursor_pos_callback(GLFWwindow* window, double mouseX, double mouseY);
+
+	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	static App& getInstance() {
+		if (instance == nullptr) {
+			instance = new App();
+		}
+		return *instance;
+	}
 private:
     GLFWwindow* window;
-    Shader* shader1;
-    Shader* shader2;
-    Model* model1;
-    Model* model2;
+	Scene* scene;
+
 
     void initGLFW();
 
     void initGLEW();
 
-    void createShaders();
+	static App* instance;
 
-    void createModels();
-
-    void render();
+	float deltaTime = 0.0f;
 };

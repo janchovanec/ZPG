@@ -1,23 +1,20 @@
 #pragma once
+#include <glm/glm.hpp>
 #include <GL/glew.h>
-#include  <GL/GL.h>
-
-//Include the standard C++ headers  
-#include <stdlib.h>
-#include <stdio.h>
 
 class Shader {
-public:
-    Shader(const char* vertex_source, const char* fragment_source);
-    void use();
 private:
-	GLuint program;
+	GLuint shaderID;
+	GLenum type;
+	GLuint compileShader(GLenum type, const char* source);
+	void checkCompileErrors(GLuint shader, GLenum type);
+public:
+	Shader(GLenum type, const char* source);
+	Shader(const Shader&) = delete;
+	Shader& operator=(const Shader&) = delete;
+	~Shader();
 
-    GLuint compileShader(GLenum type, const char* source);
+	inline GLuint getShader() { return shaderID; }
+	inline GLenum getType() { return type; }
 
-    GLuint linkProgram(GLuint vertexShader, GLuint fragmentShader);
-
-    void checkCompileErrors(GLuint shader, GLenum type);
-
-    void checkLinkErrors(GLuint program);
 };
