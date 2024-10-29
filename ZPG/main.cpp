@@ -3,7 +3,7 @@
 
 int main() {
 	App app;
-	app.initAll();
+	app.initScene();
 	app.run();
 	
 	return 0;

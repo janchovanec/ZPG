@@ -1,37 +1,4 @@
-/*#pragma once
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <GL/glew.h>
-
-class ShaderProgram;
-class Camera {
-public:
-	Camera(ShaderProgram* shader);
-	Camera(const Camera&) = delete;
-	Camera& operator=(const Camera&) = delete;
-
-	glm::mat4 getViewMatrix();
-	glm::mat4 getProjectionMatrix();
-
-	void toFront(float speed, float deltaTime);
-	void toBack(float speed, float deltaTime);
-	void toLeft(float speed, float deltaTime);
-	void toRight(float speed, float deltaTime);
-	void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
-
-	glm::vec3 eye; // Position
-	glm::vec3 target; // Front
-	glm::vec3 up; // Up
-	glm::vec3 right; // Right
-private:
-	ShaderProgram* shader;
-	void updateCameraVectors();
-
-	const float MouseSensitivity;
-	float Yaw;
-	float Pitch;
-};*/
-
+// Adapted from: https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/camera.h
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -46,7 +13,7 @@ private:
 // Default camera values
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
-const float SPEED = 10.5f;
+const float SPEED = 20.5f;
 const float SENSITIVITY = 0.01f;
 const float ZOOM = 45.0f;
 
@@ -81,7 +48,7 @@ public:
     void ProcessKeyboard(int key, float deltaTime);
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+    void ProcessMouseMovement(float xoffset, float yoffset);
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);

@@ -1,7 +1,9 @@
 #include "App.h"
 #include "ShaderProgram.h"
 
-#include "models.h"
+#include "Models/tree.h"
+#include "Models/bushes.h"
+#include "Models/plain.h"
 
 App* App::instance = nullptr;
 
@@ -47,7 +49,7 @@ void App::initGLFW() {
         exit(EXIT_FAILURE);
     }
 
-    window = glfwCreateWindow(800, 600, "ZPG", NULL, NULL);
+    window = glfwCreateWindow(1200, 800, "ZPG", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -61,7 +63,7 @@ void App::initGLEW() {
     glewInit();
 }
 
-void App::initAll() {
+void App::initScene() {
 
     const char* vertex_shader_cam =
         "#version 410\n"
@@ -73,28 +75,61 @@ void App::initAll() {
 		"out vec3 color;"
 		"void main(void) { gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(localPosition, 1.0); color = vn; }";
 
-    const char* fragment_shader =
+	const char* fragment_shader_green =
         "#version 410\n"
         "out vec4 frag_colour;\n"
 		"in vec3 color;\n"
-		"void main () { frag_colour = vec4(color, 1.0); }";
+		"void main () { frag_colour = vec4(color * vec3(0.1, 0.5, 0.1), 1.0); }";
 
-    scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader), "position");
+	const char* fragment_shader_brown =
+		"#version 410\n"
+		"out vec4 frag_colour;\n"
+		"in vec3 color;\n"
+		"void main () { frag_colour = vec4(color * vec3(0.5, 0.3, 0.1), 1.0); }";
 
-    scene->addObject(DrawableObject(Model(tree, sizeof(tree), 92814)), "sphere");
+	const char* fragment_shader_ground =
+		"#version 410\n"
+		"out vec4 frag_colour;\n"
+		"in vec3 color;\n"
+		"void main () { frag_colour = vec4(color * vec3(0.1, 0.1, 0.1), 1.0); }";
 
+    scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_green));
+	scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_brown));
+	scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_ground));
+
+    // Add trees
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            scene->addObject(DrawableObject(Model(tree, sizeof(tree), 92814)), "sphere_" + (i * 10 + j));
-            scene->getObject("sphere_" + (i*10+j)).setShader(scene->getShader("position"));
-			scene->getObject("sphere_" + (i * 10 + j)).getModelMatrix().
-				setPosition(glm::vec3(i, 0.0f, j)).setScale(glm::vec3(0.1f, 0.1f, 0.1f));
+            scene->addObject(DrawableObject(Model(tree, sizeof(tree), 92814)), "tree_" + std::to_string(i) + ":" + std::to_string(j));
+            scene->getObject("tree_" + std::to_string(i) + ":" + std::to_string(j)).setShader(scene->getShader(0));
+
+            float scaleModifier = ((130 - (rand() % 61)) / 100.0);
+            scene->getObject("tree_" + std::to_string(i) + ":" + std::to_string(j)).getModelMatrix()
+                .setPosition(glm::vec3(i * ((120 - (rand() % 41)) / 100.0), 0.0f, j * ((120 - (rand() % 41)) / 100.0)))
+                .setScale(glm::vec3(0.1f * scaleModifier, 0.1f * scaleModifier, 0.1f * scaleModifier))
+				.setRotation(glm::vec3((8-rand()%17)/100.0, (rand() % 100) / 100.0, (8 - rand() % 17) / 100.0));
+        }
+    }
+    
+    // Add bushes
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            scene->addObject(DrawableObject(Model(tree, sizeof(tree), 8730)), "bush_" + std::to_string(i) + ":" + std::to_string(j));
+            scene->getObject("bush_" + std::to_string(i) + ":" + std::to_string(j)).setShader(scene->getShader(1));
+
+            float scaleModifier = ((120 - (rand() % 41)) / 100.0);
+            scene->getObject("bush_" + std::to_string(i) + ":" + std::to_string(j)).getModelMatrix()
+                .setPosition(glm::vec3(i * ((200 - (rand() % 101)) / 100.0), 0.0f, j * ((200 - (rand() % 101)) / 100.0)))
+                .setScale(glm::vec3(0.1f * scaleModifier, 0.02f * scaleModifier, 0.1f * scaleModifier))
+                .setRotation(glm::vec3((5 - rand() % 11) / 100.0, (rand() % 100) / 100.0, (5 - rand() % 11) / 100.0));
         }
     }
 
-	scene->getObject("sphere").setShader(scene->getShader("position"));
-	scene->getObject("sphere").getModelMatrix().setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-
+    // Add plain
+	scene->addObject(DrawableObject(Model(plain, sizeof(plain), 6)), "plain");
+	scene->getObject("plain").setShader(scene->getShader(2));
+	scene->getObject("plain").getModelMatrix().setPosition(glm::vec3(0.0f, 0.0f, 0.0f)).setScale(glm::vec3(100.0f, 0.1f, 100.0f));
+    
 }
 
 

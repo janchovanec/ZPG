@@ -4,6 +4,7 @@
 
 Scene::Scene() {
 	camera = new Camera();
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
 
 void Scene::render(float deltaTime) {
@@ -17,13 +18,12 @@ void Scene::addObject(DrawableObject object, std::string name) {
 	objects[name] = object;
 }
 
-void Scene::addShader(ShaderProgram* shader, std::string name) {
-	shaders[name] = shader;
+void Scene::addShader(ShaderProgram* shader) {
+	shaders.push_back(shader);
 	camera->addObserver(shader);
 }
 
 void Scene::movePosition(int key, float deltaTime) {
-	float speed = 15.5f;
 	for (auto& shader : shaders) {
 		camera->ProcessKeyboard(key, deltaTime);
 	}
@@ -43,7 +43,7 @@ void Scene::moveCamera(double mouseX, double mouseY) {
 
 
 	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float yoffset = lastY - ypos;
 
 	lastX = xpos;
 	lastY = ypos;

@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "DrawableObject.h"
 #include <string>
+#include <vector>
 #include "Camera.h"
 
 class Scene {
@@ -16,9 +17,9 @@ public:
 
 	void addObject(DrawableObject object, std::string name);
 
-	void addShader(ShaderProgram* shader, std::string name);
+	void addShader(ShaderProgram* shader);
 
-	inline ShaderProgram* getShader(const std::string& name) { return shaders[name]; }
+	inline ShaderProgram* getShader(int id) { return shaders[id]; }
 	inline DrawableObject& getObject(const std::string& name) { return objects[name]; }
 
 	void movePosition(int key, float deltaTime);
@@ -26,7 +27,7 @@ public:
 
 private:
 	std::unordered_map<std::string, DrawableObject> objects;
-	std::unordered_map<std::string, ShaderProgram*> shaders;
+	std::vector<ShaderProgram*> shaders;
 	float lastX = 400, lastY = 300;
 	Camera* camera;
 	bool firstMouse = true;

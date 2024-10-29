@@ -146,7 +146,6 @@
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="ICameraObserver.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="models.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />

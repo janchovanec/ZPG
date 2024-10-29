@@ -17,10 +17,6 @@ private:
 	GLint idViewTransform;
 	GLint idProjectionTransform;
 
-	Shader* vertexShader;
-
-	Shader* fragmentShader;
-
     GLuint linkProgram(GLuint vertexShader, GLuint fragmentShader);
 
     void checkLinkErrors(GLuint program);

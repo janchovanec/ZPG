@@ -20,7 +20,7 @@ public:
 
 	void initCallback();
 
-	void initAll();
+	void initScene();
 
     void cursor_pos_callback(GLFWwindow* window, double mouseX, double mouseY);
 

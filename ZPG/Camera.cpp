@@ -1,78 +1,4 @@
 #include "Camera.h"
-/*
-Camera::Camera(ShaderProgram* shader) : 
-    shader(shader), eye(glm::vec3(0.0f, 0.0f, 0.0f)), 
-    target(glm::vec3(0.0f, 0.0f, -1.0f)), up(glm::vec3(0.0f, 1.0f, 0.0f)),
-	MouseSensitivity(0.1f), Yaw(-90.0f), Pitch(0.0f)
-{
-	updateCameraVectors();
-}
-
-glm::mat4 Camera::getViewMatrix(void) {
-	return glm::lookAt(eye, eye + target, up);
-}
-
-glm::mat4 Camera::getProjectionMatrix()
-{
-	return glm::mat4(1.0f);
-}
-
-void Camera::toFront(float speed, float deltaTime) {
-	eye += target * speed * deltaTime;
-}
-
-void Camera::toBack(float speed, float deltaTime) {
-	eye -= target * speed * deltaTime;
-}
-
-void Camera::toLeft(float speed, float deltaTime) {
-	eye -= right * speed * deltaTime;
-}
-
-void Camera::toRight(float speed, float deltaTime) {
-	eye += right * speed * deltaTime;
-}
-
-void Camera::updateCameraVectors()
-{
-    glm::vec3 front;
-    front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-    front.y = sin(glm::radians(Pitch));
-    front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-    target = glm::normalize(front);
-
-	target.x = sin(glm::radians(Pitch)) * cos(glm::radians(Yaw));
-	target.y = sin(glm::radians(Pitch)) * sin(glm::radians(Yaw));
-	target.z = cos(glm::radians(Pitch));
-
-
-
-	auto worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	right = glm::normalize(glm::cross(target, worldUp));
-	up = glm::normalize(glm::cross(right, target));
-}
-
-void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
-{
-    xoffset *= MouseSensitivity;
-    yoffset *= MouseSensitivity;
-
-    Yaw += xoffset;
-    Pitch += yoffset;
-
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrainPitch)
-    {
-        if (Pitch > 89.0f)
-            Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
-    }
-
-    // update Front, Right and Up Vectors using the updated Euler angles
-    updateCameraVectors();
-}*/
-
 
 // constructor with vectors
 Camera::Camera(glm::vec3 position, glm::vec3 up , float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
@@ -112,12 +38,12 @@ void Camera::ProcessKeyboard(int key, float deltaTime)
     if (key == GLFW_KEY_D)
         Position += Right * velocity;
 
-	Position.y = 0.0f;
+	Position.y = 0.1f;
 	notifyObservers();
 }
 
 // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+void Camera::ProcessMouseMovement(float xoffset, float yoffset)
 {
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
@@ -125,16 +51,20 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
     Yaw += xoffset;
     Pitch += yoffset;
 
-	printf("Yaw: %f, Pitch: %f\n", Yaw, Pitch);
+	//printf("Yaw: %f, Pitch: %f\n", Yaw, Pitch);
 
     // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrainPitch)
-    {
-        if (Pitch > 89.0f)
+    if (Pitch > 89.0f)
             Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
-    }
+    if (Pitch < -89.0f)
+        Pitch = -89.0f;
+    
+
+	// keep yaw between 0 and 360
+	if (Yaw > 360.0f)
+		Yaw = 0.0f;
+	if (Yaw < 0.0f)
+		Yaw = 360.0f;
 
     // update Front, Right and Up Vectors using the updated Euler angles
     updateCameraVectors();
@@ -168,7 +98,7 @@ void Camera::updateCameraVectors()
 
 void Camera::notifyObservers()
 {
-	for (auto observer : observers)
+	for (auto& observer : observers)
 	{
 		observer->updateCamera(GetViewMatrix(), Position);
 	}
