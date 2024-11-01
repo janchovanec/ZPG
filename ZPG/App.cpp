@@ -91,7 +91,7 @@ void App::initScene() {
 		"#version 410\n"
 		"out vec4 frag_colour;\n"
 		"in vec3 color;\n"
-		"void main () { frag_colour = vec4(color * vec3(0.1, 0.1, 0.1), 1.0); }";
+		"void main () { frag_colour = vec4(vec3(0.1333, 0.545, 0.1333), 1.0); }";
 
     scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_green));
 	scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_brown));
@@ -114,13 +114,13 @@ void App::initScene() {
     // Add bushes
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            scene->addObject(DrawableObject(Model(tree, sizeof(tree), 8730)), "bush_" + std::to_string(i) + ":" + std::to_string(j));
+            scene->addObject(DrawableObject(Model(bushes, sizeof(bushes), 8730)), "bush_" + std::to_string(i) + ":" + std::to_string(j));
             scene->getObject("bush_" + std::to_string(i) + ":" + std::to_string(j)).setShader(scene->getShader(1));
 
             float scaleModifier = ((120 - (rand() % 41)) / 100.0);
             scene->getObject("bush_" + std::to_string(i) + ":" + std::to_string(j)).getModelMatrix()
                 .setPosition(glm::vec3(i * ((200 - (rand() % 101)) / 100.0), 0.0f, j * ((200 - (rand() % 101)) / 100.0)))
-                .setScale(glm::vec3(0.1f * scaleModifier, 0.02f * scaleModifier, 0.1f * scaleModifier))
+                .setScale(glm::vec3(0.1f * scaleModifier, 0.1f * scaleModifier, 0.1f * scaleModifier))
                 .setRotation(glm::vec3((5 - rand() % 11) / 100.0, (rand() % 100) / 100.0, (5 - rand() % 11) / 100.0));
         }
     }
