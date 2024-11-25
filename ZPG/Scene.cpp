@@ -4,6 +4,7 @@
 
 Scene::Scene() {
 	camera = new Camera();
+	flashlight = nullptr;
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
 
@@ -12,19 +13,51 @@ void Scene::render() {
 	for (auto& obj : objects) {
 		obj.second.draw();
 	}
+
+	if (flashlight != nullptr) {
+		flashlight->setPosition(camera->GetPosition());
+		flashlight->setDirection(camera->GetFront());
+	}
 }
 
 void Scene::addObject(DrawableObject object, std::string name) {
 	objects[name] = object;
 }
 
-void Scene::addLight(const glm::vec3& position, const glm::vec3& color)
-{
+void Scene::addDirectionalLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular) {
 	std::shared_ptr<Light> light = std::make_shared<Light>();
-	light->initBasic(position, color);
+	light->initDirectional(direction, ambient, diffuse, specular);
 	lights.push_back(std::move(light));
 	for (auto& shader : shaders) {
 		lights.back()->addObserver(shader);
+	}
+}
+
+void Scene::addPointLight(const glm::vec3& position, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic) {
+	std::shared_ptr<Light> light = std::make_shared<Light>();
+	light->initPoint(position, ambient, diffuse, specular, constant, linear, quadratic);
+	lights.push_back(std::move(light));
+	for (auto& shader : shaders) {
+		lights.back()->addObserver(shader);
+	}
+}
+
+void Scene::addSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff) {
+	std::shared_ptr<Light> light = std::make_shared<Light>();
+	light->initSpot(position, direction, ambient, diffuse, specular, constant, linear, quadratic, cutOff);
+	lights.push_back(std::move(light));
+	for (auto& shader : shaders) {
+		lights.back()->addObserver(shader);
+	}
+}
+
+void Scene::addFlashLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff)
+{
+	this->flashlight = new Light();
+	this->flashlight->initSpot(position, direction, ambient, diffuse, specular, constant, linear, quadratic, cutOff);
+	this->flashlight->changeSubjectType(ESubjectType::FLASHLIGHT);
+	for (auto& shader : shaders) {
+		flashlight->addObserver(shader);
 	}
 }
 
@@ -35,6 +68,7 @@ void Scene::addShaderProgram(const char* vertex_shader, const char* fragment_sha
 	}
 	this->camera->addObserver(shaders.back());
 }
+
 
 void Scene::movePosition(int key, float deltaTime) {
 	camera->ProcessKeyboard(key, deltaTime);

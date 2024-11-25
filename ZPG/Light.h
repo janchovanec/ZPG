@@ -10,9 +10,12 @@ public:
     Light();
 
 	void initDirectional(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular);
-	void initPoint(const glm::vec3& position, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic);
-	void initSpot(const glm::vec3& position, const glm::vec3& direction, const float cutOff);
-	void initBasic(const glm::vec3& position, const glm::vec3& color);
+	void initPoint(const glm::vec3& position, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, 
+				   float constant, float linear, float quadratic);
+	void initSpot(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, 
+				  const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff);
+	void initFlashLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse,
+						const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff);
 
 
     void setPosition(const glm::vec3& position);
@@ -45,13 +48,13 @@ private:
 	glm::vec3 color;
 	glm::vec3 position; // point, spot
 	glm::vec3 direction; // dir, spot
-	glm::vec3 ambient; // dir, point
-	glm::vec3 diffuse; // dir, point
-	glm::vec3 specular; // dir, point
+	glm::vec3 ambient; // dir, point, spot
+	glm::vec3 diffuse; // dir, point, spot
+	glm::vec3 specular; // dir, point, spot
 
-	float constant; // point
-	float linear; // point
-	float quadratic; // point
+	float constant; // point, spot
+	float linear; // point, spot
+	float quadratic; // point, spot
 
 	float cutOff; // spot
 };

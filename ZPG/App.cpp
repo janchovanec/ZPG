@@ -73,20 +73,52 @@ void App::initGLEW() {
 
 void App::treeScene() {
 
-	// Add lights
-	scene->addLight(glm::vec3(0.1f, 0.2f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	// Add dir light
+	//scene->addDirectionalLight(glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
 
+	// Add point light
+	//scene->addPointLight(glm::vec3(0.3f, 0.5f, 0.6f), glm::vec3(0.8f, 0.2f, 0.2f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f);
+
+	// Add spot light
+	/*scene->addSpotLight(glm::vec3(0.3f, 0.5f, 0.6f), // position
+		glm::vec3(0.0f, -1.0f, 0.0f), // direction
+		glm::vec3(0.1f, 0.1f, 0.1f), // ambient
+		glm::vec3(0.8f, 0.8f, 0.8f), // diffuse
+		glm::vec3(1.0f, 1.0f, 1.0f), // specular
+		1.0f, // constant
+		0.09f, // linear
+		0.032f, // quadratic
+		glm::cos(glm::radians(12.5f))); // cutOff
+		*/
 	// Set camera position
 	scene->setCameraPosition(glm::vec3(0.0f, 0.5f, 0.2f));
 
 	// Add shaders
-    scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_phong.frag");
-	scene->addShaderProgram("Shaders/vertex_shader_cam.vert", "Shaders/fragment_shader_brown.frag");
-	scene->addShaderProgram("Shaders/vertex_shader_cam.vert", "Shaders/fragment_shader_ground.frag");
-	scene->addShaderProgram("Shaders/vertex_lambert.vert", "Shaders/fragment_lambert.frag");
+    scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_lights.frag");
+	scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_lights.frag");
+	scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_lights.frag");
 
     std::vector<std::shared_ptr<BaseTransform>> scales;
 	std::vector<std::shared_ptr<BaseTransform>> rotations;
+
+	scene->addFlashLight(glm::vec3(0.3f, 0.5f, 0.6f), // position
+		glm::vec3(0.0f, -1.0f, 0.0f), // direction
+		glm::vec3(0.1f, 0.1f, 0.1f), // ambient
+		glm::vec3(0.8f, 0.8f, 0.8f), // diffuse
+		glm::vec3(1.0f, 1.0f, 1.0f), // specular
+		1.0f, // constant
+		0.09f, // linear
+		0.032f, // quadratic
+		glm::cos(glm::radians(12.5f))); // cutOff
+
+
+	// add sphere to debug light position
+	scene->addObject(DrawableObject(scene->getShader(0), Model(sphere, sizeof(sphere), 2880), glm::vec3(1.0f, 1.0f, 1.0f)), "light");
+	auto& light = scene->getObject("light");
+	light.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.3f, 0.5f, 0.6f)));
+	light.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.2f, 0.2f, 0.2f)));
+
+
 
     // Add random rotations
     for (int i = 0; i < 20; i++) {
@@ -111,7 +143,7 @@ void App::treeScene() {
     // Add trees
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            scene->addObject(DrawableObject(scene->getShader(0), Model(tree, sizeof(tree), 92814), glm::vec3(0.0,(rand()%10)/10.0, 0.0)), "tree_" + std::to_string(i) + ":" + std::to_string(j));
+            scene->addObject(DrawableObject(scene->getShader(0), Model(tree, sizeof(tree), 92814), glm::vec3(0.01,(rand()%100)/100.0, 0.01)), "tree_" + std::to_string(i) + ":" + std::to_string(j));
             auto& obj = scene->getObject("tree_" + std::to_string(i) + ":" + std::to_string(j));
             // Translation
             obj.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(i * ((120 - (rand() % 41)) / 100.0), 0.0f, j * ((120 - (rand() % 41)) / 100.0))));
@@ -120,8 +152,8 @@ void App::treeScene() {
 			// Scale
 			obj.getModelMatrix().addTransform(scales[rand() % 20]);
 
-			// Add dynamic rotation
-			obj.getModelMatrix().addTransform(drot);
+			// Add dynamic rotation to some trees
+			if (rand()%5 == 0) obj.getModelMatrix().addTransform(drot);
         }
     }
     
@@ -145,7 +177,7 @@ void App::treeScene() {
 	// Add gifts
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 10; j++) {
-			scene->addObject(DrawableObject(scene->getShader(3), Model(gift, sizeof(gift), 66624), glm::vec3(1.0f, 0.0f, 0.0f)), "gift_" + std::to_string(i) + ":" + std::to_string(j));
+			scene->addObject(DrawableObject(scene->getShader(0), Model(gift, sizeof(gift), 66624), glm::vec3(1.0f, 0.0f, 0.0f)), "gift_" + std::to_string(i) + ":" + std::to_string(j));
 
 			auto& obj = scene->getObject("gift_" + std::to_string(i) + ":" + std::to_string(j));
 
@@ -159,17 +191,16 @@ void App::treeScene() {
 	}
 
     // Add plain
-	scene->addObject(DrawableObject(Model(plain, sizeof(plain), 6)), "plain");
+	scene->addObject(DrawableObject(scene->getShader(0), Model(plain, sizeof(plain), 6), glm::vec3(137 / 255.0, 81 / 255.0, 41 / 255.0)), "plain");
 
 	auto& plain = scene->getObject("plain");
-	plain.setShader(scene->getShader(2));
 	plain.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.0f, 0.0f, 0.0f)));
 	plain.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(100.0f, 0.1f, 100.0f)));
     
 }
 
 void App::ballScene() {
-	scene->addLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	scene->addSpotLight(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f, glm::cos(glm::radians(12.5f)));
 	scene->setCameraPosition(glm::vec3(0.0f, 1.0f, 0.0f));
 
 	scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_phong.frag", glm::vec3(1.0, 1.0, 1.0));
@@ -205,7 +236,7 @@ void App::ballScene() {
 
 void App::triangleScene()
 {
-	scene->addLight(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	scene->addDirectionalLight(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
 	scene->setCameraPosition(glm::vec3(0.0f, 1.0f, 0.0f));
 
 	scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_phong.frag", glm::vec3(1.0, 1.0, 1.0));
@@ -214,7 +245,7 @@ void App::triangleScene()
 	shared_ptr<ScaleTransform> scale = make_shared<ScaleTransform>(glm::vec3(0.5f, 0.5f, 0.5f));
 	shared_ptr<RotTransform> rot = make_shared<RotTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	scene->addObject(DrawableObject(scene->getShader(0), Model(plain, sizeof(plain)/2, 6), glm::vec3(1.0, 1.0, 0.0)), "triangle");
+	scene->addObject(DrawableObject(scene->getShader(0), Model(plain, sizeof(plain)/2, 6), glm::vec3(137 / 255.0, 81 / 255.0, 41 / 255.0)), "triangle");
 	auto& mat = scene->getObject("triangle").getModelMatrix();
 	mat.addTransform(pos);
 	mat.addTransform(scale);
@@ -239,6 +270,17 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 	case GLFW_KEY_R:
 		if (action == GLFW_PRESS) {
 			scene->updateShaders();
+		}
+		break;
+	// debug cutoff for flashlight
+	case GLFW_KEY_UP:
+		if (action == GLFW_PRESS) {
+			scene->flashlight->setCutOff(scene->flashlight->getCutOff() + 0.01f);
+		}
+		break;
+	case GLFW_KEY_DOWN:
+		if (action == GLFW_PRESS) {
+			scene->flashlight->setCutOff(scene->flashlight->getCutOff() - 0.01f);
 		}
 		break;
     }

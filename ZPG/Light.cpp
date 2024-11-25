@@ -34,23 +34,25 @@ void Light::initPoint(const glm::vec3& position, const glm::vec3& ambient, const
 	notifyObservers();
 }
 
-void Light::initSpot(const glm::vec3& position, const glm::vec3& direction, const float cutOff) {
+void Light::initSpot(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff) {
 	type = ELightType::SPOT;
 	this->position = position;
 	this->direction = direction;
+	this->ambient = ambient;
+	this->diffuse = diffuse;
+	this->specular = specular;
+	this->constant = constant;
+	this->linear = linear;
+	this->quadratic = quadratic;
 	this->cutOff = cutOff;
 	notifyObservers();
 }
 
-void Light::initBasic(const glm::vec3& position, const glm::vec3& color)
+void Light::initFlashLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff)
 {
-	type = ELightType::EMPTY;
-	this->position = position;
-	this->color = color;
-	notifyObservers();
+	this->initSpot(position, direction, ambient, diffuse, specular, constant, linear, quadratic, cutOff);
+	this->changeSubjectType(ESubjectType::FLASHLIGHT);
 }
-
-
 
 void Light::setType(ELightType type) {
 	this->type = type;

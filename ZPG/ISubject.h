@@ -18,6 +18,10 @@ public:
 		observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
 	}
 
+	inline void changeSubjectType(ESubjectType type) {
+		this->type = type;
+	}
+
 	inline void notifyObservers() {
 		for (auto& observer : observers) {
 			observer->updateObserver(type);

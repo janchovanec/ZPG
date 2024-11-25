@@ -21,8 +21,6 @@ private:
 	GLint idLightCount;
 	GLint idViewPosition;
 	GLint idObjectColor;
-	GLint ambientStrength;
-	GLint specularStrength;
 	GLint shininess;
 
 	GLint idModelTransform;

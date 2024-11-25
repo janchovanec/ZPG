@@ -4,7 +4,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Scene.h"
 
-
 ShaderProgram::ShaderProgram(const char* vertex_source, const char* fragment_source, Scene* scene, glm::vec3 color) {
 	this->scene = scene;
 	program = loadShader(vertex_source, fragment_source);
@@ -18,12 +17,9 @@ ShaderProgram::ShaderProgram(const char* vertex_source, const char* fragment_sou
 	idObjectColor = glGetUniformLocation(program, "objectColor");
 
 
-	ambientStrength = glGetUniformLocation(program, "ambientStrength");
-	specularStrength = glGetUniformLocation(program, "specularStrength");
 	shininess = glGetUniformLocation(program, "shininess");
-	glUniform1f(ambientStrength, 0.1f);
-	glUniform1f(specularStrength, 0.5f);
-	glUniform1f(shininess, 64.0f);
+	glUniform1f(shininess, 32.0f);
+
 	glUniform3fv(idViewPosition, 1, glm::value_ptr(scene->camera->GetPosition()));
 	glUniform1i(idLightCount, 0);
 	glUniform3fv(idObjectColor, 1, glm::value_ptr(color));
@@ -66,6 +62,20 @@ void ShaderProgram::updateObserver(ESubjectType type)
 			glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].cutOff").c_str()), scene->lights[i]->getCutOff());
 		}
 		glUniform1i(idLightCount, scene->lights.size());
+	}
+	else if (type == ESubjectType::FLASHLIGHT) {
+		// flashlight update
+		glUniform3fv(glGetUniformLocation(program, "flashlight.position"), 1, glm::value_ptr(scene->flashlight->getPosition()));
+		glUniform3fv(glGetUniformLocation(program, "flashlight.color"), 1, glm::value_ptr(scene->flashlight->getColor()));
+		glUniform1i(glGetUniformLocation(program, "flashlight.type"), scene->flashlight->getType());
+		glUniform3fv(glGetUniformLocation(program, "flashlight.direction"), 1, glm::value_ptr(scene->flashlight->getDirection()));
+		glUniform3fv(glGetUniformLocation(program, "flashlight.ambient"), 1, glm::value_ptr(scene->flashlight->getAmbient()));
+		glUniform3fv(glGetUniformLocation(program, "flashlight.diffuse"), 1, glm::value_ptr(scene->flashlight->getDiffuse()));
+		glUniform3fv(glGetUniformLocation(program, "flashlight.specular"), 1, glm::value_ptr(scene->flashlight->getSpecular()));
+		glUniform1f(glGetUniformLocation(program, "flashlight.constant"), scene->flashlight->getConstant());
+		glUniform1f(glGetUniformLocation(program, "flashlight.linear"), scene->flashlight->getLinear());
+		glUniform1f(glGetUniformLocation(program, "flashlight.quadratic"), scene->flashlight->getQuadratic());
+		glUniform1f(glGetUniformLocation(program, "flashlight.cutOff"), scene->flashlight->getCutOff());
 	}
 
 }
