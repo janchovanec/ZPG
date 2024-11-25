@@ -39,44 +39,12 @@ void ShaderProgram::use() {
 void ShaderProgram::updateObserver(ESubjectType type)
 {
 	glUseProgram(program);
-	if (type == ESubjectType::CAMERA) {
-		// camera update
-		auto viewMatrix = scene->camera->GetViewMatrix();
-		glUniformMatrix4fv(idViewTransform, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		// view position update
-		glUniform3fv(idViewPosition, 1, glm::value_ptr(scene->camera->GetPosition()));
-	}
-	else if (type == ESubjectType::LIGHT) {
-		// light update
-		for (int i = 0; i < scene->lights.size(); i++) {
-			glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].position").c_str()), 1, glm::value_ptr(scene->lights[i]->getPosition()));
-			glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].color").c_str()), 1, glm::value_ptr(scene->lights[i]->getColor()));
-			glUniform1i(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].type").c_str()), scene->lights[i]->getType());
-			glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].direction").c_str()), 1, glm::value_ptr(scene->lights[i]->getDirection()));
-			glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].ambient").c_str()), 1, glm::value_ptr(scene->lights[i]->getAmbient()));
-			glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].diffuse").c_str()), 1, glm::value_ptr(scene->lights[i]->getDiffuse()));
-			glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].specular").c_str()), 1, glm::value_ptr(scene->lights[i]->getSpecular()));
-			glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].constant").c_str()), scene->lights[i]->getConstant());
-			glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].linear").c_str()), scene->lights[i]->getLinear());
-			glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].quadratic").c_str()), scene->lights[i]->getQuadratic());
-			glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].cutOff").c_str()), scene->lights[i]->getCutOff());
-		}
-		glUniform1i(idLightCount, scene->lights.size());
-	}
-	else if (type == ESubjectType::FLASHLIGHT) {
-		// flashlight update
-		glUniform3fv(glGetUniformLocation(program, "flashlight.position"), 1, glm::value_ptr(scene->flashlight->getPosition()));
-		glUniform3fv(glGetUniformLocation(program, "flashlight.color"), 1, glm::value_ptr(scene->flashlight->getColor()));
-		glUniform1i(glGetUniformLocation(program, "flashlight.type"), scene->flashlight->getType());
-		glUniform3fv(glGetUniformLocation(program, "flashlight.direction"), 1, glm::value_ptr(scene->flashlight->getDirection()));
-		glUniform3fv(glGetUniformLocation(program, "flashlight.ambient"), 1, glm::value_ptr(scene->flashlight->getAmbient()));
-		glUniform3fv(glGetUniformLocation(program, "flashlight.diffuse"), 1, glm::value_ptr(scene->flashlight->getDiffuse()));
-		glUniform3fv(glGetUniformLocation(program, "flashlight.specular"), 1, glm::value_ptr(scene->flashlight->getSpecular()));
-		glUniform1f(glGetUniformLocation(program, "flashlight.constant"), scene->flashlight->getConstant());
-		glUniform1f(glGetUniformLocation(program, "flashlight.linear"), scene->flashlight->getLinear());
-		glUniform1f(glGetUniformLocation(program, "flashlight.quadratic"), scene->flashlight->getQuadratic());
-		glUniform1f(glGetUniformLocation(program, "flashlight.cutOff"), scene->flashlight->getCutOff());
-	}
+	// camera update
+	auto viewMatrix = scene->camera->GetViewMatrix();
+	glUniformMatrix4fv(idViewTransform, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	// view position update
+	glUniform3fv(idViewPosition, 1, glm::value_ptr(scene->camera->GetPosition()));
+
 
 }
 
@@ -92,6 +60,40 @@ void ShaderProgram::setColor(glm::vec3 color)
 {
 	glUseProgram(program);
 	glUniform3fv(idObjectColor, 1, glm::value_ptr(color));
+}
+
+void ShaderProgram::updateLights()
+{
+	glUseProgram(program);
+	for (int i = 0; i < scene->lights.size(); i++) {
+		glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].position").c_str()), 1, glm::value_ptr(scene->lights[i]->getPosition()));
+		glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].color").c_str()), 1, glm::value_ptr(scene->lights[i]->getColor()));
+		glUniform1i(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].type").c_str()), scene->lights[i]->getType());
+		glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].direction").c_str()), 1, glm::value_ptr(scene->lights[i]->getDirection()));
+		glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].ambient").c_str()), 1, glm::value_ptr(scene->lights[i]->getAmbient()));
+		glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].diffuse").c_str()), 1, glm::value_ptr(scene->lights[i]->getDiffuse()));
+		glUniform3fv(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].specular").c_str()), 1, glm::value_ptr(scene->lights[i]->getSpecular()));
+		glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].constant").c_str()), scene->lights[i]->getConstant());
+		glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].linear").c_str()), scene->lights[i]->getLinear());
+		glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].quadratic").c_str()), scene->lights[i]->getQuadratic());
+		glUniform1f(glGetUniformLocation(program, ("lights[" + std::to_string(i) + "].cutOff").c_str()), scene->lights[i]->getCutOff());
+	}
+	glUniform1i(idLightCount, scene->lights.size());
+}
+
+void ShaderProgram::updateFlashLight() {
+	glUseProgram(program);
+	glUniform3fv(glGetUniformLocation(program, "flashlight.position"), 1, glm::value_ptr(scene->flashlight->getPosition()));
+	glUniform3fv(glGetUniformLocation(program, "flashlight.color"), 1, glm::value_ptr(scene->flashlight->getColor()));
+	glUniform1i(glGetUniformLocation(program, "flashlight.type"), scene->flashlight->getType());
+	glUniform3fv(glGetUniformLocation(program, "flashlight.direction"), 1, glm::value_ptr(scene->flashlight->getDirection()));
+	glUniform3fv(glGetUniformLocation(program, "flashlight.ambient"), 1, glm::value_ptr(scene->flashlight->getAmbient()));
+	glUniform3fv(glGetUniformLocation(program, "flashlight.diffuse"), 1, glm::value_ptr(scene->flashlight->getDiffuse()));
+	glUniform3fv(glGetUniformLocation(program, "flashlight.specular"), 1, glm::value_ptr(scene->flashlight->getSpecular()));
+	glUniform1f(glGetUniformLocation(program, "flashlight.constant"), scene->flashlight->getConstant());
+	glUniform1f(glGetUniformLocation(program, "flashlight.linear"), scene->flashlight->getLinear());
+	glUniform1f(glGetUniformLocation(program, "flashlight.quadratic"), scene->flashlight->getQuadratic());
+	glUniform1f(glGetUniformLocation(program, "flashlight.cutOff"), scene->flashlight->getCutOff());
 }
 
 GLuint ShaderProgram::linkProgram(GLuint vertexShader, GLuint fragmentShader) {

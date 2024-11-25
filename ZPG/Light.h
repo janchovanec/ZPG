@@ -6,7 +6,7 @@
 #include "enums.h"
 
 
-class Light : public ISubject {
+class Light {
 public:
     Light();
 

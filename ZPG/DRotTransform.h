@@ -6,8 +6,6 @@
 #include "RotTransform.h"
 
 class DRotTransform : public RotTransform {
-private:
-	glm::vec3 rotationSpeed;
 public:
 	DRotTransform(glm::vec3 rotationSpeed = glm::vec3(0.0f, 0.0f, 0.0f)) : rotationSpeed(rotationSpeed) {}
 	inline glm::mat4 getTransformMatrix() override {
@@ -20,4 +18,6 @@ public:
 
 		return RotTransform::getTransformMatrix();
 	}
+private:
+	glm::vec3 rotationSpeed;
 };

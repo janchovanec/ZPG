@@ -155,6 +155,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightMovement.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="LightPosTransform.h" />
     <ClInclude Include="PosTransform.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RotTransform.h" />

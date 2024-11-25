@@ -14,9 +14,9 @@ namespace LightMovement
 
     void circularMotion(Light& light, float deltaTime) {
         static float angle = 0.0f;
-        angle += deltaTime;
-        float radius = 5.0f;
-        glm::vec3 pos = glm::vec3(cos(angle) * radius, light.getPosition().y, sin(angle) * radius);
+        angle += deltaTime / 10;
+        float radius = 0.002f;
+		glm::vec3 pos = glm::vec3(light.getPosition().x + cos(angle) * radius, light.getPosition().y, light.getPosition().z + sin(angle) * radius);
         light.setPosition(pos);
     }
 }

@@ -16,6 +16,9 @@ public:
 
 	void setModelTransform(glm::mat4 modelTransform);
 	void setColor(glm::vec3 color);
+
+	void updateLights();
+	void updateFlashLight();
 private:
 	GLuint program;
 	GLint idLightCount;

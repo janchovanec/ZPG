@@ -23,7 +23,11 @@ void Scene::render(float deltaTime) {
 	for (auto& light : lights) {
 		light->updateLight(deltaTime);
 	}
-	lights[0]->notifyObservers();
+	
+	for (auto& shader : shaders) {
+		shader->updateLights();
+		shader->updateFlashLight();
+	}
 }
 
 void Scene::addObject(DrawableObject object, std::string name) {
@@ -34,44 +38,28 @@ void Scene::addDirectionalLight(const glm::vec3& direction, const glm::vec3& amb
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->initDirectional(direction, ambient, diffuse, specular);
 	lights.push_back(std::move(light));
-	for (auto& shader : shaders) {
-		lights.back()->addObserver(shader);
-	}
 }
 
 void Scene::addPointLight(const glm::vec3& position, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic) {
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->initPoint(position, ambient, diffuse, specular, constant, linear, quadratic);
 	lights.push_back(std::move(light));
-	for (auto& shader : shaders) {
-		lights.back()->addObserver(shader);
-	}
 }
 
 void Scene::addSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff) {
 	std::shared_ptr<Light> light = std::make_shared<Light>();
 	light->initSpot(position, direction, ambient, diffuse, specular, constant, linear, quadratic, cutOff);
 	lights.push_back(std::move(light));
-	for (auto& shader : shaders) {
-		lights.back()->addObserver(shader);
-	}
 }
 
 void Scene::addFlashLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic, float cutOff)
 {
 	this->flashlight = new Light();
 	this->flashlight->initSpot(position, direction, ambient, diffuse, specular, constant, linear, quadratic, cutOff);
-	this->flashlight->changeSubjectType(ESubjectType::FLASHLIGHT);
-	for (auto& shader : shaders) {
-		flashlight->addObserver(shader);
-	}
 }
 
 void Scene::addShaderProgram(const char* vertex_shader, const char* fragment_shader, glm::vec3 color) {
 	shaders.push_back(std::make_shared<ShaderProgram>(vertex_shader, fragment_shader, this, color));
-	for (auto& light : lights) {
-		light->addObserver(shaders.back());
-	}
 	this->camera->addObserver(shaders.back());
 }
 

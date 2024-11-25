@@ -12,6 +12,7 @@
 #include "ScaleTransform.h"
 #include "PosTransform.h"
 #include "DRotTransform.h"
+#include "LightPosTransform.h"
 #include "LightMovement.h"
 
 App* App::instance = nullptr;
@@ -75,7 +76,7 @@ void App::initGLEW() {
 void App::treeScene() {
 
 	// Add dir light
-	//scene->addDirectionalLight(glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
+	scene->addDirectionalLight(glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.02f, 0.02f, 0.08f), glm::vec3(0.1f, 0.1f, 0.9f), glm::vec3(0.2f, 0.2f, 0.2f));
 
 	// Add point light
 	//scene->addPointLight(glm::vec3(0.3f, 0.5f, 0.6f), glm::vec3(0.8f, 0.2f, 0.2f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.09f, 0.032f);
@@ -113,15 +114,37 @@ void App::treeScene() {
 		0.032f, // quadratic
 		glm::cos(glm::radians(12.5f))); // cutOff
 
-
+	
 	// add fireflies
 	for (int i = 0; i < 10; i++) {
-		scene->addPointLight(glm::vec3((rand() % 100) / 1000.0, 0.4 + (rand() % 100) / 1000.0, (rand() % 100) / 1000.0), 
+		glm::vec3 pos = glm::vec3((rand() % 100) / 10.0, 0.1 + (rand() % 100) / 1000.0, (rand() % 100) / 10.0);
+		scene->addPointLight(pos,
 							 glm::vec3(0.05f, 0.05f, 0.0f),
-							 glm::vec3(0.08f, 0.08f, 0.03f),
-							 glm::vec3(0.02f, 0.02f, 0.01f),
-							 1.0f, 0.9f, 2.8f);
+							 glm::vec3(0.8f, 0.8f, 0.3f),
+							 glm::vec3(0.2f, 0.2f, 0.1f),
+							 1.0f, 0.7f, 1.8f);
 		scene->lights.back()->setMovementMethod(LightMovement::oscillate);
+
+		scene->addObject(DrawableObject(scene->getShader(0), Model(sphere, sizeof(sphere), 2880), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_" + std::to_string(i));
+		auto& obj = scene->getObject("firefly_" + std::to_string(i));
+		obj.getModelMatrix().addTransform(std::make_shared<LightPosTransform>(scene->lights.back(), glm::vec3(0, -0.1, 0)));
+		obj.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.02f, 0.02f, 0.02f)));
+	}
+
+	// add fireflies flying in circle
+	for (int i = 0; i < 10; i++) {
+		glm::vec3 pos = glm::vec3((rand() % 100) / 1000.0, 0.2, (rand() % 100) / 1000.0);
+		scene->addPointLight(pos,
+			glm::vec3(0.05f, 0.05f, 0.0f),
+			glm::vec3(0.8f, 0.1f, 0.1f),
+			glm::vec3(0.2f, 0.2f, 0.1f),
+			1.0f, 0.7f, 1.8f);
+		scene->lights.back()->setMovementMethod(LightMovement::circularMotion);
+
+		scene->addObject(DrawableObject(scene->getShader(0), Model(sphere, sizeof(sphere), 2880), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_circle_" + std::to_string(i));
+		auto& obj = scene->getObject("firefly_circle_" + std::to_string(i));
+		obj.getModelMatrix().addTransform(std::make_shared<LightPosTransform>(scene->lights.back(), glm::vec3(0, -0.1, 0)));
+		obj.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.005f, 0.005f, 0.005f)));
 	}
 
 

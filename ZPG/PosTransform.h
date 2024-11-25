@@ -5,7 +5,7 @@
 #include "BaseTransform.h"
 
 class PosTransform : public BaseTransform {
-private:
+protected:
 	glm::vec3 position;
 public:
 	PosTransform(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f)) : position(position) {}
