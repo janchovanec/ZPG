@@ -15,7 +15,7 @@
 class Scene {
 public:
 	Scene();
-	void render();
+	void render(float deltaTime);
 
 	void addObject(DrawableObject object, std::string name);
 	void addDirectionalLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular);

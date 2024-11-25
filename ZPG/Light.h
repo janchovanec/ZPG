@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <functional>
 #include "ISubject.h"
 #include "enums.h"
 
@@ -43,6 +44,10 @@ public:
 	inline float getQuadratic() const { return quadratic; }
 	inline float getCutOff() const { return cutOff; }
 
+
+	inline void setMovementMethod(std::function<void(Light&, float)> movementMethod) { this->movementMethod = movementMethod; }
+	void updateLight(float deltaTime);
+
 private:
 	ELightType type;
 	glm::vec3 color;
@@ -57,5 +62,7 @@ private:
 	float quadratic; // point, spot
 
 	float cutOff; // spot
+
+	std::function<void(Light&, float)> movementMethod;
 };
 

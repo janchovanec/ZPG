@@ -153,6 +153,7 @@
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="ISubject.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightMovement.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PosTransform.h" />
     <ClInclude Include="resource.h" />

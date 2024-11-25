@@ -8,7 +8,7 @@ Scene::Scene() {
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
 
-void Scene::render() {
+void Scene::render(float deltaTime) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	for (auto& obj : objects) {
 		obj.second.draw();
@@ -17,7 +17,13 @@ void Scene::render() {
 	if (flashlight != nullptr) {
 		flashlight->setPosition(camera->GetPosition());
 		flashlight->setDirection(camera->GetFront());
+		flashlight->updateLight(0);
 	}
+
+	for (auto& light : lights) {
+		light->updateLight(deltaTime);
+	}
+	lights[0]->notifyObservers();
 }
 
 void Scene::addObject(DrawableObject object, std::string name) {

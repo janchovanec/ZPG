@@ -98,5 +98,8 @@
     <ClInclude Include="resource.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
+    <ClInclude Include="LightMovement.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

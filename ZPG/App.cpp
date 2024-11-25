@@ -12,6 +12,7 @@
 #include "ScaleTransform.h"
 #include "PosTransform.h"
 #include "DRotTransform.h"
+#include "LightMovement.h"
 
 App* App::instance = nullptr;
 
@@ -35,7 +36,7 @@ void App::run() {
 		auto newTime = glfwGetTime();
 		deltaTime = newTime - lastTime;
 		lastTime = newTime;
-        scene->render();
+        scene->render(deltaTime);
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
@@ -101,6 +102,7 @@ void App::treeScene() {
     std::vector<std::shared_ptr<BaseTransform>> scales;
 	std::vector<std::shared_ptr<BaseTransform>> rotations;
 
+	// Add flashlight
 	scene->addFlashLight(glm::vec3(0.3f, 0.5f, 0.6f), // position
 		glm::vec3(0.0f, -1.0f, 0.0f), // direction
 		glm::vec3(0.1f, 0.1f, 0.1f), // ambient
@@ -112,11 +114,16 @@ void App::treeScene() {
 		glm::cos(glm::radians(12.5f))); // cutOff
 
 
-	// add sphere to debug light position
-	scene->addObject(DrawableObject(scene->getShader(0), Model(sphere, sizeof(sphere), 2880), glm::vec3(1.0f, 1.0f, 1.0f)), "light");
-	auto& light = scene->getObject("light");
-	light.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.3f, 0.5f, 0.6f)));
-	light.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.2f, 0.2f, 0.2f)));
+	// add fireflies
+	for (int i = 0; i < 10; i++) {
+		scene->addPointLight(glm::vec3((rand() % 100) / 1000.0, 0.4 + (rand() % 100) / 1000.0, (rand() % 100) / 1000.0), 
+							 glm::vec3(0.05f, 0.05f, 0.0f),
+							 glm::vec3(0.08f, 0.08f, 0.03f),
+							 glm::vec3(0.02f, 0.02f, 0.01f),
+							 1.0f, 0.9f, 2.8f);
+		scene->lights.back()->setMovementMethod(LightMovement::oscillate);
+	}
+
 
 
 
