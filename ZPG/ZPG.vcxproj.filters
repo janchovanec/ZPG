@@ -33,13 +33,13 @@
     <ClCompile Include="DrawableObject.cpp">
       <Filter>Soubory zdrojů</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Soubory zdrojů</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Soubory zdrojů</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
+      <Filter>Soubory zdrojů</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderLoader.cpp">
+      <Filter>Soubory zdrojů</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
       <Filter>Soubory zdrojů</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,16 +59,43 @@
     <ClInclude Include="DrawableObject.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Hlavičkové soubory</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
+    <ClInclude Include="IObserver.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
-    <ClInclude Include="ICameraObserver.h">
+    <ClInclude Include="ShaderLoader.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="ISubject.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="enums.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseTransform.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="RotTransform.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleTransform.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="PosTransform.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="CompTransform.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="DRotTransform.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
   </ItemGroup>

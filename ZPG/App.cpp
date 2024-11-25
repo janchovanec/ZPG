@@ -4,6 +4,14 @@
 #include "Models/tree.h"
 #include "Models/bushes.h"
 #include "Models/plain.h"
+#include "Models/sphere.h"
+#include "Models/gift.h"
+
+#include "BaseTransform.h"
+#include "RotTransform.h"
+#include "ScaleTransform.h"
+#include "PosTransform.h"
+#include "DRotTransform.h"
 
 App* App::instance = nullptr;
 
@@ -27,7 +35,7 @@ void App::run() {
 		auto newTime = glfwGetTime();
 		deltaTime = newTime - lastTime;
 		lastTime = newTime;
-        scene->render(deltaTime);
+        scene->render();
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
@@ -63,51 +71,57 @@ void App::initGLEW() {
     glewInit();
 }
 
-void App::initScene() {
+void App::treeScene() {
 
-    const char* vertex_shader_cam =
-        "#version 410\n"
-        "layout(location = 0) in vec3 localPosition;"
-		"layout(location = 1) in vec3 vn;\n"
-        "uniform mat4 modelMatrix;"
-        "uniform mat4 viewMatrix;"
-        "uniform mat4 projectionMatrix;"
-		"out vec3 color;"
-		"void main(void) { gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(localPosition, 1.0); color = vn; }";
+	// Add lights
+	scene->addLight(glm::vec3(0.1f, 0.2f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-	const char* fragment_shader_green =
-        "#version 410\n"
-        "out vec4 frag_colour;\n"
-		"in vec3 color;\n"
-		"void main () { frag_colour = vec4(color * vec3(0.1, 0.5, 0.1), 1.0); }";
+	// Set camera position
+	scene->setCameraPosition(glm::vec3(0.0f, 0.5f, 0.2f));
 
-	const char* fragment_shader_brown =
-		"#version 410\n"
-		"out vec4 frag_colour;\n"
-		"in vec3 color;\n"
-		"void main () { frag_colour = vec4(color * vec3(0.5, 0.3, 0.1), 1.0); }";
+	// Add shaders
+    scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_phong.frag");
+	scene->addShaderProgram("Shaders/vertex_shader_cam.vert", "Shaders/fragment_shader_brown.frag");
+	scene->addShaderProgram("Shaders/vertex_shader_cam.vert", "Shaders/fragment_shader_ground.frag");
+	scene->addShaderProgram("Shaders/vertex_lambert.vert", "Shaders/fragment_lambert.frag");
 
-	const char* fragment_shader_ground =
-		"#version 410\n"
-		"out vec4 frag_colour;\n"
-		"in vec3 color;\n"
-		"void main () { frag_colour = vec4(vec3(0.1333, 0.545, 0.1333), 1.0); }";
+    std::vector<std::shared_ptr<BaseTransform>> scales;
+	std::vector<std::shared_ptr<BaseTransform>> rotations;
 
-    scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_green));
-	scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_brown));
-	scene->addShader(new ShaderProgram(vertex_shader_cam, fragment_shader_ground));
+    // Add random rotations
+    for (int i = 0; i < 20; i++) {
+		rotations.push_back(std::make_shared<RotTransform>(glm::vec3((8 - rand() % 17) / 100.0, (rand() % 100) / 100.0, (8 - rand() % 17) / 100.0)));
+    }
+
+    // Add random scales for trees
+	for (int i = 0; i < 20; i++) {
+        float scaleModifier = ((130 - (rand() % 61)) / 100.0);
+		scales.push_back(std::make_shared<ScaleTransform>(glm::vec3(0.1f * scaleModifier, 0.1f * scaleModifier, 0.1f * scaleModifier)));
+	}
+
+    // Add random scales for bushes
+    for (int i = 0; i < 20; i++) {
+        float scaleModifier = ((120 - (rand() % 41)) / 100.0);
+        scales.push_back(std::make_shared<ScaleTransform>(glm::vec3(0.1f * scaleModifier, 0.1f * scaleModifier, 0.1f * scaleModifier)));
+    }
+
+	// Dynamic rotation for trees
+	std::shared_ptr<DRotTransform> drot = std::make_shared<DRotTransform>(glm::vec3(0.0f, 0.0001f, 0.0f));
 
     // Add trees
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            scene->addObject(DrawableObject(Model(tree, sizeof(tree), 92814)), "tree_" + std::to_string(i) + ":" + std::to_string(j));
-            scene->getObject("tree_" + std::to_string(i) + ":" + std::to_string(j)).setShader(scene->getShader(0));
+            scene->addObject(DrawableObject(scene->getShader(0), Model(tree, sizeof(tree), 92814), glm::vec3(0.0,(rand()%10)/10.0, 0.0)), "tree_" + std::to_string(i) + ":" + std::to_string(j));
+            auto& obj = scene->getObject("tree_" + std::to_string(i) + ":" + std::to_string(j));
+            // Translation
+            obj.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(i * ((120 - (rand() % 41)) / 100.0), 0.0f, j * ((120 - (rand() % 41)) / 100.0))));
+			// Rotation
+			obj.getModelMatrix().addTransform(rotations[rand()%20]);
+			// Scale
+			obj.getModelMatrix().addTransform(scales[rand() % 20]);
 
-            float scaleModifier = ((130 - (rand() % 61)) / 100.0);
-            scene->getObject("tree_" + std::to_string(i) + ":" + std::to_string(j)).getModelMatrix()
-                .setPosition(glm::vec3(i * ((120 - (rand() % 41)) / 100.0), 0.0f, j * ((120 - (rand() % 41)) / 100.0)))
-                .setScale(glm::vec3(0.1f * scaleModifier, 0.1f * scaleModifier, 0.1f * scaleModifier))
-				.setRotation(glm::vec3((8-rand()%17)/100.0, (rand() % 100) / 100.0, (8 - rand() % 17) / 100.0));
+			// Add dynamic rotation
+			obj.getModelMatrix().addTransform(drot);
         }
     }
     
@@ -117,19 +131,95 @@ void App::initScene() {
             scene->addObject(DrawableObject(Model(bushes, sizeof(bushes), 8730)), "bush_" + std::to_string(i) + ":" + std::to_string(j));
             scene->getObject("bush_" + std::to_string(i) + ":" + std::to_string(j)).setShader(scene->getShader(1));
 
-            float scaleModifier = ((120 - (rand() % 41)) / 100.0);
-            scene->getObject("bush_" + std::to_string(i) + ":" + std::to_string(j)).getModelMatrix()
-                .setPosition(glm::vec3(i * ((200 - (rand() % 101)) / 100.0), 0.0f, j * ((200 - (rand() % 101)) / 100.0)))
-                .setScale(glm::vec3(0.1f * scaleModifier, 0.1f * scaleModifier, 0.1f * scaleModifier))
-                .setRotation(glm::vec3((5 - rand() % 11) / 100.0, (rand() % 100) / 100.0, (5 - rand() % 11) / 100.0));
+			auto& obj = scene->getObject("bush_" + std::to_string(i) + ":" + std::to_string(j));
+
+			// Translation
+			obj.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(i * ((200 - (rand() % 101)) / 100.0), 0.0f, j * ((200 - (rand() % 101)) / 100.0))));
+			// Rotation
+			obj.getModelMatrix().addTransform(rotations[rand() % 20]);
+			// Scale
+			obj.getModelMatrix().addTransform(scales[20 + rand() % 20]);
         }
     }
 
+	// Add gifts
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			scene->addObject(DrawableObject(scene->getShader(3), Model(gift, sizeof(gift), 66624), glm::vec3(1.0f, 0.0f, 0.0f)), "gift_" + std::to_string(i) + ":" + std::to_string(j));
+
+			auto& obj = scene->getObject("gift_" + std::to_string(i) + ":" + std::to_string(j));
+
+			// Translation
+			obj.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(i * ((200 - (rand() % 101)) / 100.0), 0.0f, j * ((200 - (rand() % 101)) / 100.0))));
+			// Rotation
+			obj.getModelMatrix().addTransform(rotations[rand() % 20]);
+			// Scale
+			obj.getModelMatrix().addTransform(scales[20 + rand() % 20]);
+		}
+	}
+
     // Add plain
 	scene->addObject(DrawableObject(Model(plain, sizeof(plain), 6)), "plain");
-	scene->getObject("plain").setShader(scene->getShader(2));
-	scene->getObject("plain").getModelMatrix().setPosition(glm::vec3(0.0f, 0.0f, 0.0f)).setScale(glm::vec3(100.0f, 0.1f, 100.0f));
+
+	auto& plain = scene->getObject("plain");
+	plain.setShader(scene->getShader(2));
+	plain.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.0f, 0.0f, 0.0f)));
+	plain.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(100.0f, 0.1f, 100.0f)));
     
+}
+
+void App::ballScene() {
+	scene->addLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	scene->setCameraPosition(glm::vec3(0.0f, 1.0f, 0.0f));
+
+	scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_phong.frag", glm::vec3(1.0, 1.0, 1.0));
+
+	shared_ptr<ScaleTransform> scale = make_shared<ScaleTransform>(glm::vec3(0.1f, 0.1f, 0.1f));
+
+	scene->addObject(DrawableObject(Model(sphere, sizeof(sphere), 2880)), "sphere");
+	scene->addObject(DrawableObject(Model(sphere, sizeof(sphere), 2880)), "sphere2");
+	scene->addObject(DrawableObject(Model(sphere, sizeof(sphere), 2880)), "sphere3");
+	scene->addObject(DrawableObject(Model(sphere, sizeof(sphere), 2880)), "sphere4");
+
+
+	auto& sphere = scene->getObject("sphere");
+	sphere.setShader(scene->getShader(0));
+	sphere.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.5f, 0.0f, 0.0f)));
+	sphere.getModelMatrix().addTransform(scale);
+
+	sphere = scene->getObject("sphere2");
+	sphere.setShader(scene->getShader(0));
+	sphere.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(-0.5f, 0.0f, 0.0f)));
+	sphere.getModelMatrix().addTransform(scale);
+
+	sphere = scene->getObject("sphere3");
+	sphere.setShader(scene->getShader(0));
+	sphere.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.0f, 0.0f, 0.5f)));
+	sphere.getModelMatrix().addTransform(scale);
+
+	sphere = scene->getObject("sphere4");
+	sphere.setShader(scene->getShader(0));
+	sphere.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.0f, 0.0f, -0.5f)));
+	sphere.getModelMatrix().addTransform(scale);
+}
+
+void App::triangleScene()
+{
+	scene->addLight(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	scene->setCameraPosition(glm::vec3(0.0f, 1.0f, 0.0f));
+
+	scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_phong.frag", glm::vec3(1.0, 1.0, 1.0));
+
+	shared_ptr<PosTransform> pos = make_shared<PosTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
+	shared_ptr<ScaleTransform> scale = make_shared<ScaleTransform>(glm::vec3(0.5f, 0.5f, 0.5f));
+	shared_ptr<RotTransform> rot = make_shared<RotTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	scene->addObject(DrawableObject(scene->getShader(0), Model(plain, sizeof(plain)/2, 6), glm::vec3(1.0, 1.0, 0.0)), "triangle");
+	auto& mat = scene->getObject("triangle").getModelMatrix();
+	mat.addTransform(pos);
+	mat.addTransform(scale);
+	mat.addTransform(rot);
+
 }
 
 
@@ -145,5 +235,11 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
         if (action == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
+		break;
+	case GLFW_KEY_R:
+		if (action == GLFW_PRESS) {
+			scene->updateShaders();
+		}
+		break;
     }
 }

@@ -1,25 +1,13 @@
-// Adapted from: https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/camera.h
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
 #include <vector>
-
-#include "ICameraObserver.h"
-
-
-// Default camera values
-const float YAW = -90.0f;
-const float PITCH = 0.0f;
-const float SPEED = 2.5f;
-const float SENSITIVITY = 0.01f;
-const float ZOOM = 45.0f;
+#include "ISubject.h"
 
 
-// An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
-class Camera
+class Camera : public ISubject
 {
 public:
     // camera Attributes
@@ -32,36 +20,28 @@ public:
     float Yaw;
     float Pitch;
     // camera options
-    float MovementSpeed;
-    float MouseSensitivity;
-    float Zoom;
+    float MovementSpeed = 2.5f;
+    float MouseSensitivity = 0.01f;
+    float Zoom = 45.0f;
 
-    // constructor with vectors
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
-    // constructor with scalar values
+
+    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = 90.0, float pitch = -90.0);
+
     Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
-    // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-    glm::mat4 GetViewMatrix();
+    glm::mat4 GetViewMatrix() const;
 
-    // processes input received from any keyboard-like input system.
     void ProcessKeyboard(int key, float deltaTime);
 
-    // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(float xoffset, float yoffset);
 
-    // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
-	inline void addObserver(ICameraObserver* observer) { observers.push_back(observer); }
-	inline void removeObserver(ICameraObserver* observer) { observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end()); }
+	inline glm::vec3 GetPosition() const { return Position; }
 
+	inline void SetPosition(glm::vec3 position) { Position = position; updateCameraVectors(); }
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors();
 
-	std::vector<ICameraObserver*> observers;
-
-	void notifyObservers();
 };
-#endif CAMERA_H

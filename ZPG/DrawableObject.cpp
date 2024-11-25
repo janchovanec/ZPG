@@ -2,16 +2,18 @@
 
 void DrawableObject::draw()
 {
-	shader->use(modelMatrix.getTransformMatrix());
+	shader->setColor(color);
+	shader->setModelTransform(modelMatrix.getTransformMatrix());
+	shader->use();
 	model.draw();
 }
 
-void DrawableObject::setShader(ShaderProgram* shader)
+void DrawableObject::setShader(std::shared_ptr<ShaderProgram> shader)
 {
 	this->shader = shader;
 }
 
-Transform& DrawableObject::getModelMatrix()
+CompTransform& DrawableObject::getModelMatrix()
 {
 	return this->modelMatrix;
 }

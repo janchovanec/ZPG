@@ -8,27 +8,34 @@
 #include "DrawableObject.h"
 #include <string>
 #include <vector>
+#include <memory>
 #include "Camera.h"
+#include "Light.h"
 
 class Scene {
 public:
 	Scene();
-	void render(float deltaTime);
+	void render();
 
 	void addObject(DrawableObject object, std::string name);
+	void addLight(const glm::vec3& position, const glm::vec3& color);
+	void addShaderProgram(const char* vertex_shader, const char* fragment_shader, glm::vec3 color = glm::vec3(1.0, 1.0, 1.0));
 
-	void addShader(ShaderProgram* shader);
-
-	inline ShaderProgram* getShader(int id) { return shaders[id]; }
+	inline std::shared_ptr<ShaderProgram> getShader(int id) { return shaders[id]; }
 	inline DrawableObject& getObject(const std::string& name) { return objects[name]; }
+
 
 	void movePosition(int key, float deltaTime);
 	void moveCamera(double mouseX, double mouseY);
+	inline void setCameraPosition(glm::vec3 position) { camera->SetPosition(position); }
 
+	void updateShaders();
+
+	std::vector<std::shared_ptr<Light>> lights;
+	Camera* camera;
 private:
 	std::unordered_map<std::string, DrawableObject> objects;
-	std::vector<ShaderProgram*> shaders;
+	std::vector<std::shared_ptr<ShaderProgram>> shaders;
 	float lastX = 400, lastY = 300;
-	Camera* camera;
 	bool firstMouse = true;
 };

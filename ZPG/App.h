@@ -20,7 +20,11 @@ public:
 
 	void initCallback();
 
-	void initScene();
+	void treeScene();
+
+	void ballScene();
+
+	void triangleScene();
 
     void cursor_pos_callback(GLFWwindow* window, double mouseX, double mouseY);
 

@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -105,6 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\johnn\source\repos\ZPG\ZPG\libs\glfw-3.4.bin.WIN64\include;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glew-2.1.0\include;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glm-master;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,23 +135,32 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="BaseTransform.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CompTransform.h" />
     <ClInclude Include="DrawableObject.h" />
-    <ClInclude Include="ICameraObserver.h" />
+    <ClInclude Include="DRotTransform.h" />
+    <ClInclude Include="enums.h" />
+    <ClInclude Include="IObserver.h" />
+    <ClInclude Include="ISubject.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="PosTransform.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="RotTransform.h" />
+    <ClInclude Include="ScaleTransform.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

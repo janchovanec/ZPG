@@ -3,7 +3,9 @@
 
 int main() {
 	App app;
-	app.initScene();
+	app.treeScene();
+	//app.ballScene();
+	//app.triangleScene();
 	app.run();
 	
 	return 0;
