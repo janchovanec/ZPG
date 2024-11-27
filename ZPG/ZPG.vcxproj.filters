@@ -42,6 +42,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Soubory zdrojů</Filter>
     </ClCompile>
+    <ClCompile Include="TexturedModel.cpp">
+      <Filter>Soubory zdrojů</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -95,13 +98,13 @@
     <ClInclude Include="DRotTransform.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Hlavičkové soubory</Filter>
-    </ClInclude>
     <ClInclude Include="LightMovement.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
     <ClInclude Include="LightPosTransform.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedModel.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
   </ItemGroup>

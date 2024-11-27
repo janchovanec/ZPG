@@ -30,12 +30,16 @@ public:
 
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+	void updateProjectionMatrix(float width, float height);
+
 	static App& getInstance() {
 		if (instance == nullptr) {
 			instance = new App();
 		}
 		return *instance;
 	}
+
+	static void win_size_callback(GLFWwindow* window, int width, int height);
 private:
     GLFWwindow* window;
 	Scene* scene;

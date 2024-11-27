@@ -2,15 +2,21 @@
 #include <memory>
 #include "ShaderProgram.h"
 #include "Model.h"
+#include "TexturedModel.h"
 #include "CompTransform.h"
 #include <glm/common.hpp>
 
 class DrawableObject {
 public:
-	DrawableObject(std::shared_ptr<ShaderProgram> shader, Model model, glm::vec3 color) : shader(shader), model(model), color(color), rotationSpeed(glm::vec3(0.0, 0.0, 0.0)) {
+	DrawableObject(std::shared_ptr<ShaderProgram> shader, Model* model, glm::vec3 color) : shader(shader), model(model), color(color), rotationSpeed(glm::vec3(0.0, 0.0, 0.0)) {
 		modelMatrix = CompTransform();
 	}
-	DrawableObject(Model model) : model(model), rotationSpeed(glm::vec3(0.0, 0.0, 0.0)) {
+	DrawableObject(std::shared_ptr<ShaderProgram> shader, TexturedModel* model) : shader(shader), model(model), color(color), rotationSpeed(glm::vec3(0.0, 0.0, 0.0)) {
+		modelMatrix = CompTransform();
+		color = glm::vec3(1.0, 1.0, 1.0);
+	}
+
+	DrawableObject(Model* model) : model(model), rotationSpeed(glm::vec3(0.0, 0.0, 0.0)) {
 		modelMatrix = CompTransform();
 		shader = nullptr;
 		color = glm::vec3(1.0, 1.0, 1.0);
@@ -18,7 +24,7 @@ public:
 	DrawableObject() {
 		modelMatrix = CompTransform();
 		shader = nullptr;
-		model = Model();
+		model = nullptr;
 		color = glm::vec3(1.0, 1.0, 1.0);
 		rotationSpeed = glm::vec3(0.0, 0.0, 0.0);
 	}
@@ -28,7 +34,7 @@ public:
 	CompTransform& getModelMatrix();
 private:
 	std::shared_ptr<ShaderProgram> shader;
-	Model model;
+	Model* model;
 	CompTransform modelMatrix;
 	glm::vec3 color;
 	glm::vec3 rotationSpeed;

@@ -11,11 +11,8 @@ public:
     Model(const float* vertices, int size, int count);
 	Model() : VAO(0), VBO(0), vertexCount(0) {}
 
-    void draw();
-private:
+    virtual void draw();
+protected:
     GLuint VAO, VBO;
     int vertexCount;
 };
-
-
-

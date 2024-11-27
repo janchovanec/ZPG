@@ -105,14 +105,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\johnn\source\repos\ZPG\ZPG\libs\glfw-3.4.bin.WIN64\include;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glew-2.1.0\include;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glm-master;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\johnn\source\repos\ZPG\ZPG\libs\glfw-3.4.bin.WIN64\include;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glew-2.1.0\include;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glm-master;C:\Users\johnn\source\repos\ZPG\ZPG\libs\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\johnn\source\repos\ZPG\ZPG\libs\glfw-3.4.bin.WIN64\lib-vc2022;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;glew32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\johnn\source\repos\ZPG\ZPG\libs\glfw-3.4.bin.WIN64\lib-vc2022;C:\Users\johnn\source\repos\ZPG\ZPG\libs\glew-2.1.0\lib\Release\x64;C:\Users\johnn\source\repos\ZPG\ZPG\libs\soil\lib-vc2012\Platform_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,6 +141,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="TexturedModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -157,12 +158,12 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="LightPosTransform.h" />
     <ClInclude Include="PosTransform.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="RotTransform.h" />
     <ClInclude Include="ScaleTransform.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="TexturedModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

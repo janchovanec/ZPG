@@ -98,3 +98,10 @@ void Scene::updateShaders()
 		shader->updateObserver(ESubjectType::CAMERA);
 	}
 }
+
+void Scene::setProjectionMatrix(const glm::mat4& projection)
+{
+	for (auto& shader : shaders) {
+		shader->setProjectionMatrix(projection);
+	}
+}

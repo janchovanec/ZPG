@@ -5,7 +5,7 @@ void DrawableObject::draw()
 	shader->setColor(color);
 	shader->setModelTransform(modelMatrix.getTransformMatrix());
 	shader->use();
-	model.draw();
+	model->draw();
 }
 
 void DrawableObject::setShader(std::shared_ptr<ShaderProgram> shader)

@@ -16,6 +16,7 @@ public:
 
 	void setModelTransform(glm::mat4 modelTransform);
 	void setColor(glm::vec3 color);
+	void setProjectionMatrix(glm::mat4 projection);
 
 	void updateLights();
 	void updateFlashLight();
@@ -31,7 +32,6 @@ private:
 	GLint idProjectionTransform;
 
 	Scene* scene;
-
 
     GLuint linkProgram(GLuint vertexShader, GLuint fragmentShader);
 

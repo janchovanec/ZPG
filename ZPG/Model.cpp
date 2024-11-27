@@ -1,8 +1,8 @@
 #include "Model.h"
 
 Model::Model(const float* vertices, int size, int count) : vertexCount(count) {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);

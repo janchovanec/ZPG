@@ -24,6 +24,7 @@ ShaderProgram::ShaderProgram(const char* vertex_source, const char* fragment_sou
 	glUniform1i(idLightCount, 0);
 	glUniform3fv(idObjectColor, 1, glm::value_ptr(color));
 
+	// default projection matrix
     const auto pers = glm::perspective(glm::radians(60.0f), 1200.0f / 800.0f, 0.001f, 100000.0f);
     glUniformMatrix4fv(idProjectionTransform, 1, GL_FALSE, glm::value_ptr(pers));
 }
@@ -48,8 +49,6 @@ void ShaderProgram::updateObserver(ESubjectType type)
 
 }
 
-
-
 void ShaderProgram::setModelTransform(glm::mat4 modelTransform)
 {
 	glUseProgram(program);
@@ -60,6 +59,12 @@ void ShaderProgram::setColor(glm::vec3 color)
 {
 	glUseProgram(program);
 	glUniform3fv(idObjectColor, 1, glm::value_ptr(color));
+}
+
+void ShaderProgram::setProjectionMatrix(glm::mat4 projection)
+{
+	glUseProgram(program);
+	glUniformMatrix4fv(idProjectionTransform, 1, GL_FALSE, glm::value_ptr(projection));
 }
 
 void ShaderProgram::updateLights()
@@ -82,6 +87,8 @@ void ShaderProgram::updateLights()
 }
 
 void ShaderProgram::updateFlashLight() {
+	if (scene->flashlight == nullptr) return;
+
 	glUseProgram(program);
 	glUniform3fv(glGetUniformLocation(program, "flashlight.position"), 1, glm::value_ptr(scene->flashlight->getPosition()));
 	glUniform3fv(glGetUniformLocation(program, "flashlight.color"), 1, glm::value_ptr(scene->flashlight->getColor()));

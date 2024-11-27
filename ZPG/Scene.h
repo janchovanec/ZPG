@@ -36,6 +36,7 @@ public:
 	inline void setCameraPosition(glm::vec3 position) { camera->SetPosition(position); }
 
 	void updateShaders();
+	void setProjectionMatrix(const glm::mat4& projection);
 
 	std::vector<std::shared_ptr<Light>> lights;
 	Camera* camera;
@@ -45,5 +46,4 @@ private:
 	std::vector<std::shared_ptr<ShaderProgram>> shaders;
 	float lastX = 400, lastY = 300;
 	bool firstMouse = true;
-
 };
