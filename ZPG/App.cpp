@@ -124,10 +124,10 @@ void App::treeScene() {
 	for (int i = 0; i < 10; i++) {
 		glm::vec3 pos = glm::vec3((rand() % 100) / 10.0, 0.1 + (rand() % 100) / 1000.0, (rand() % 100) / 10.0);
 		scene->addPointLight(pos,
-							 glm::vec3(0.05f, 0.05f, 0.0f),
+							 glm::vec3(0.5f, 0.5f, 0.5f),
 							 glm::vec3(0.0f, 0.0f, 0.0f),
-							 glm::vec3(0.2f, 0.2f, 0.1f),
-							 1.0f, 0.7f, 1.8f);
+							 glm::vec3(1.2f, 1.2f, 1.1f),
+							 0.0f, 0.0f, 1.8f);
 		scene->lights.back()->setMovementMethod(LightMovement::oscillate);
 
 		scene->addObject(DrawableObject(scene->getShader(0), new Model(sphere, sizeof(sphere), 2880), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_" + std::to_string(i));
@@ -143,7 +143,7 @@ void App::treeScene() {
 			glm::vec3(0.02f, 0.09f, 0.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
 			glm::vec3(0.01f, 0.01f, 0.01f),
-			0.01f, 0.01f, 10.0f);
+			0.0f, 0.0f, 1.0f);
 		scene->lights.back()->setMovementMethod(LightMovement::circularMotion);
 
 		scene->addObject(DrawableObject(scene->getShader(0), new Model(sphere, sizeof(sphere), 2880), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_circle_" + std::to_string(i));
