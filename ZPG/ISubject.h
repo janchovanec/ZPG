@@ -2,14 +2,12 @@
 #include <vector>
 #include <memory>
 #include "IObserver.h"
-#include "enums.h"
 
 class ISubject {
 private:
 	std::vector<std::shared_ptr<IObserver>> observers;
-	ESubjectType type;
 public:
-	ISubject(ESubjectType type) : type(type) {}
+	ISubject() {}
 
 	inline void addObserver(std::shared_ptr<IObserver> observer) {
 		observers.push_back(observer);
@@ -18,13 +16,9 @@ public:
 		observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
 	}
 
-	inline void changeSubjectType(ESubjectType type) {
-		this->type = type;
-	}
-
 	inline void notifyObservers() {
 		for (auto& observer : observers) {
-			observer->updateObserver(type);
+			observer->updateObserver();
 		}
 	}
 };

@@ -14,6 +14,7 @@
 #include "PosTransform.h"
 #include "DRotTransform.h"
 #include "LightPosTransform.h"
+#include "DCirclingTransform.h"
 #include "LightMovement.h"
 
 App* App::instance = nullptr;
@@ -76,9 +77,7 @@ void App::initGLEW() {
 }
 
 void App::treeScene() {
-
-	// Add dir light simulating moonlight
-
+	// Add dir light
 	scene->addDirectionalLight(glm::vec3(-0.2f, -1.0f, -0.3f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.05f, 0.05f, 0.45f), glm::vec3(0.2f, 0.2f, 0.2f));
 
 	/*
@@ -104,9 +103,15 @@ void App::treeScene() {
     scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_lights.frag");
 	scene->addShaderProgram("Shaders/vertex_phong.vert", "Shaders/fragment_lights.frag");
 	scene->addShaderProgram("Shaders/vertex_texture_light.vert", "Shaders/fragment_texture_light.frag");
+	scene->addShaderProgram("Shaders/vertex_skybox.vert", "Shaders/fragment_skybox.frag");
 
-    std::vector<std::shared_ptr<BaseTransform>> scales;
-	std::vector<std::shared_ptr<BaseTransform>> rotations;
+	// Add skybox
+	scene->addSkyBox("Models/skybox/posx.jpg", "Models/skybox/negx.jpg", 
+					 "Models/skybox/posy.jpg", "Models/skybox/negy.jpg", 
+					 "Models/skybox/posz.jpg", "Models/skybox/negz.jpg", 
+					 scene->getShader(3));
+	scene->skybox->getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(100.0f, 100.0f, 100.0f)));
+    
 
 	// Add flashlight
 	scene->addFlashLight(glm::vec3(0.3f, 0.5f, 0.6f), // position
@@ -130,7 +135,7 @@ void App::treeScene() {
 							 0.0f, 0.0f, 1.8f);
 		scene->lights.back()->setMovementMethod(LightMovement::oscillate);
 
-		scene->addObject(DrawableObject(scene->getShader(0), new Model(sphere, sizeof(sphere), 2880), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_" + std::to_string(i));
+		scene->addObject(DrawableObject(scene->getShader(0), new Model(sphere, sizeof(sphere), sizeof(sphere) / 24), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_" + std::to_string(i));
 		auto& obj = scene->getObject("firefly_" + std::to_string(i));
 		obj.getModelMatrix().addTransform(std::make_shared<LightPosTransform>(scene->lights.back(), glm::vec3(0, 0.1, 0)));
 		obj.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.02f, 0.02f, 0.02f)));
@@ -146,21 +151,21 @@ void App::treeScene() {
 			0.0f, 0.0f, 1.0f);
 		scene->lights.back()->setMovementMethod(LightMovement::circularMotion);
 
-		scene->addObject(DrawableObject(scene->getShader(0), new Model(sphere, sizeof(sphere), 2880), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_circle_" + std::to_string(i));
+		scene->addObject(DrawableObject(scene->getShader(0), new Model(sphere, sizeof(sphere), sizeof(sphere) / 24), glm::vec3(0.1f, 0.5f, 0.0f)), "firefly_circle_" + std::to_string(i));
 		auto& obj = scene->getObject("firefly_circle_" + std::to_string(i));
 		obj.getModelMatrix().addTransform(std::make_shared<LightPosTransform>(scene->lights.back(), glm::vec3(0, -0.1, 0)));
 		obj.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.005f, 0.005f, 0.005f)));
 	}
 
 
-
-
     // Add random rotations
+	std::vector<std::shared_ptr<BaseTransform>> rotations;
     for (int i = 0; i < 20; i++) {
 		rotations.push_back(std::make_shared<RotTransform>(glm::vec3((8 - rand() % 17) / 100.0, (rand() % 100) / 100.0, (8 - rand() % 17) / 100.0)));
     }
 
     // Add random scales for trees
+	std::vector<std::shared_ptr<BaseTransform>> scales;
 	for (int i = 0; i < 20; i++) {
         float scaleModifier = ((130 - (rand() % 61)) / 100.0);
 		scales.push_back(std::make_shared<ScaleTransform>(glm::vec3(0.1f * scaleModifier, 0.1f * scaleModifier, 0.1f * scaleModifier)));
@@ -173,7 +178,7 @@ void App::treeScene() {
     }
 
 	// Dynamic rotation for trees
-	std::shared_ptr<DRotTransform> drot = std::make_shared<DRotTransform>(glm::vec3(0.0f, 0.0001f, 0.0f));
+	std::shared_ptr<DRotTransform> drot = std::make_shared<DRotTransform>(glm::vec3(0.0f, 0.0002f, 0.0f));
 
     // Add trees
     for (int i = 0; i < 10; i++) {
@@ -224,14 +229,28 @@ void App::treeScene() {
 			obj.getModelMatrix().addTransform(scales[20 + rand() % 20]);
 		}
 	}
-
+	
     // Add plain
 	scene->addObject(DrawableObject(scene->getShader(2), new TexturedModel(tex_plain, sizeof(tex_plain), 6, "Shaders/Textures/grass.png")), "plain");
 
 	auto& plain = scene->getObject("plain");
 	plain.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(0.0f, 0.0f, 0.0f)));
 	plain.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(100.0f, 0.1f, 100.0f)));
-    
+	
+	// Add house assimp
+	scene->addObject(DrawableObject(scene->getShader(2), new TexturedModel("Models/house/house.obj")), "house");
+	auto& house = scene->getObject("house");
+	house.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(-1.0f, 0.0f, -1.0f)));
+	house.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.1f, 0.1f, 0.1f)));
+	house.getModelMatrix().addTransform(std::make_shared<RotTransform>(glm::vec3(0.0f, 0.0f, 0.0f)));
+
+	// Add zombie assimp
+	scene->addObject(DrawableObject(scene->getShader(2), new TexturedModel("Models/zombie/zombie.obj")), "zombie");
+	auto& zombie = scene->getObject("zombie");
+	zombie.getModelMatrix().addTransform(std::make_shared<PosTransform>(glm::vec3(-1.0f, 0.0f, 1.0f)));
+	zombie.getModelMatrix().addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.1f, 0.1f, 0.1f)));
+	zombie.getModelMatrix().addTransform(std::make_shared<RotTransform>(glm::vec3(0.0f, 0.0f, 0.0f)));
+	zombie.getModelMatrix().addTransform(std::make_shared<DCirclingTransform>(3.0f, 0.5f));
 }
 
 void App::ballScene() {

@@ -28,6 +28,11 @@ void Scene::render(float deltaTime) {
 		shader->updateLights();
 		shader->updateFlashLight();
 	}
+
+	if (skybox != nullptr) {
+		skybox->draw();
+	}
+
 }
 
 void Scene::addObject(DrawableObject object, std::string name) {
@@ -56,6 +61,11 @@ void Scene::addFlashLight(const glm::vec3& position, const glm::vec3& direction,
 {
 	this->flashlight = new Light();
 	this->flashlight->initSpot(position, direction, ambient, diffuse, specular, constant, linear, quadratic, cutOff);
+}
+
+void Scene::addSkyBox(const std::string& posx, const std::string& negx, const std::string& posy, const std::string& negy, const std::string& posz, const std::string& negz, std::shared_ptr<ShaderProgram> shader)
+{
+	skybox = new DrawableObject(shader, new SkyBox(posx, negx, posy, negy, posz, negz));
 }
 
 void Scene::addShaderProgram(const char* vertex_shader, const char* fragment_shader, glm::vec3 color) {
@@ -94,8 +104,7 @@ void Scene::moveCamera(double mouseX, double mouseY) {
 void Scene::updateShaders()
 {
 	for (auto& shader : shaders) {
-		shader->updateObserver(ESubjectType::LIGHT);
-		shader->updateObserver(ESubjectType::CAMERA);
+		shader->updateObserver();
 	}
 }
 

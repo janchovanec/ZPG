@@ -37,7 +37,7 @@ void ShaderProgram::use() {
     glUseProgram(program);
 }
 
-void ShaderProgram::updateObserver(ESubjectType type)
+void ShaderProgram::updateObserver()
 {
 	glUseProgram(program);
 	// camera update

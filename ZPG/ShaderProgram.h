@@ -12,7 +12,7 @@ public:
 	ShaderProgram() = default;
 	~ShaderProgram();
     void use();
-	void updateObserver(ESubjectType type) override;
+	void updateObserver() override;
 
 	void setModelTransform(glm::mat4 modelTransform);
 	void setColor(glm::vec3 color);

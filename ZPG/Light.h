@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <functional>
 #include "ISubject.h"
-#include "enums.h"
+#include "utils.h"
 
 
 class Light {
